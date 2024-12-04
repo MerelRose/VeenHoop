@@ -9,10 +9,28 @@ function Header() {
   const navigate = useNavigate();
 
   return (
-    <header className='w-screen bg-cyan-700'>
+    <>
+    <header className='w-screen bg-cyan-700 drop-shadow-lg'>
       <img src={logo} className="w-48 h-auto" alt="logo" onClick={() => navigate('/')} />
-      <h1>Login</h1>
+      <div className='absolute top-10 left-[200px] text-center'>
+        <p className='font-schoolbell text-6xl text-white'><strong>De VeenHoop</strong></p>
+        <p className='font-shadows text-xl text-white'>School voor voortgezet onderwijs</p>
+      </div>
     </header>
+    </>
+  );
+}
+
+function Footer() {
+  const navigate = useNavigate();
+
+  return (
+    <>
+    <footer className='w-screen bg-gray-200 py-4 bottom-0 absolute' >
+      <hr/>
+      <p className='text-center'>©2024 De VeenHoop, All rights reserved</p>
+    </footer>
+    </>
   );
 }
 
@@ -26,6 +44,7 @@ function App() {
           <Route path="/" element={<Login />} />
         </Routes>
       </div>
+      <Footer />
     </>
   );
 }
