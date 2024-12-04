@@ -1,6 +1,9 @@
 const express = require('express');
 const conn = require("./conn");
 
+const { loginDocent } = require("./controllers/login");
+const { registerDocent } = require("./controllers/register");
+
 module.exports = function (app) {
     // Middleware to parse JSON data
     app.use(express.json()); 
@@ -9,6 +12,9 @@ module.exports = function (app) {
     app.get('/', (req, res) => {
         res.send('Hello World!');
     });
+
+    app.post("/loginDocent", loginDocent);
+    app.post("/registerDocent", registerDocent);
 
     app.get("/blokken", function (req, res) {
         let sql = "SELECT * FROM blokken";
@@ -64,7 +70,7 @@ module.exports = function (app) {
             }
         });
     });
-    
+
     app.get("/vakken", function (req, res) {
         let sql = "SELECT * FROM vakken";
         conn.query(sql, function (err, rows) {
