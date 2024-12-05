@@ -15,8 +15,12 @@ const CijfersInvoer = () => {
     useEffect(() => {
         // Haal klassen en vakken op bij het laden van de component
         const fetchData = async () => {
-            const klassenRes = await axios.get('http://localhost:3001/klassen'); // Pas de URL aan
-            const vakkenRes = await axios.get('http://localhost:3001/vakken'); // Pas de URL aan
+            const klassenRes = await axios.get('http://localhost:3001/klassen', {headers: {
+              'x-api-key': `${API_KEY}`
+          }}); // Pas de URL aan
+            const vakkenRes = await axios.get('http://localhost:3001/vakken', {headers: {
+              'x-api-key': `${API_KEY}`
+          }}); // Pas de URL aan
             setKlassen(klassenRes.data);
             setVakken(vakkenRes.data);
         };
@@ -60,14 +64,14 @@ const CijfersInvoer = () => {
     };
 
     const handleKlasChange = async (e) => {
-        setKlas(e.target.value);
-        const leerlingenRes = await axios.get(`http://localhost:3001/leerlingen?klas_id=${e.target.value}`, {
+      setKlas(e.target.value);
+      const leerlingenRes = await axios.get(`http://localhost:3001/leerlingen?klas_id=${e.target.value}`, {
           headers: {
-            'x-api-key': `${API_KEY}`
+              'x-api-key': `${API_KEY}`
           }
-        });
-        setLeerlingen(leerlingenRes.data);
-    };
+      });
+      setLeerlingen(leerlingenRes.data);
+  };
 
     return (
       <>
@@ -95,17 +99,26 @@ const CijfersInvoer = () => {
             <div>
                 <h3>Leerlingen:</h3>
                 {leerlingen.map((leerling) => (
-                    <div key={leerling.leerling_id}>
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={!!selectedLeerlingen[leerling.leerling_id]}
-                                onChange={() => handleCheckboxChange(leerling.leerling_id)}
-                            />
-                            {leerling.name}
-                        </label>
-                    </div>
-                ))}
+    <div key={leerling.leerling_id}>
+        <label>
+            <input
+                type="checkbox"
+                checked={!!selectedLeerlingen[leerling.leerling_id]}
+                onChange={() => handleCheckboxChange(leerling.leerling_id)}
+            />
+            {leerling.name}
+                      </label>
+                      {selectedLeerlingen[leerling.leerling_id] && (
+                          <form onSubmit={(e) => {
+                              e.preventDefault();
+                              const cijfer = e.target.cijfer.value;
+                          }}>
+                              <input type="number" name="cijfer" min="1" max="10" required />
+                              <button type="submit">Save Grade</button>
+                          </form>
+                      )}
+                  </div>
+              ))}
             </div>
             <button type="submit">Cijfers Invoeren</button>
         </form>

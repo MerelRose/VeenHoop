@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import background from '../images/veenhoop.jpg';
 import '../styles/App.css';
 
@@ -9,9 +10,17 @@ function Home() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [apiEndpoint, setApiEndpoint] = useState('http://localhost:3001/loginstudent'); // Default to student endpoint
+  const navigate = useNavigate();
 
-  // Define your API key here
-  const API_KEY = 'VeenHoop_APIKEY_G123242JDD224jJnndjh2774hdDJJWeruu338hu32fnfh'; // Replace with your actual API key
+  const API_KEY = 'VeenHoop_APIKEY_G123242JDD224jJnndjh2774hdDJJWeruu338hu32fnfh';
+
+  // Check if the user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/home'); // Redirect to /home if already logged in
+    }
+  }, [navigate]);
 
   const handleLogin = async () => {
     try {
@@ -28,9 +37,12 @@ function Home() {
       setSuccessMessage(`Welcome, ${response.data.name}`);
       setErrorMessage('');
 
-      // Optionally, store token for later use
+      // Store token and role for later use
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', response.data.role);
+
+      // Redirect to /home after successful login
+      navigate('/home');
     } catch (error) {
       // Handle errors
       setErrorMessage(error.response?.data?.message || 'Login failed');

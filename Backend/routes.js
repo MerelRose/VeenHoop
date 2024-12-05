@@ -46,14 +46,15 @@ module.exports = function (app) {
             return res.status(400).send("klas_id, vak_id, and leerlingen are required");
         }
     
-        // Prepare SQL query to insert grades
         const sql = "INSERT INTO cijfers (leerling_id, klas_id, vak_id, cijfer) VALUES ?";
         const values = leerlingen.map(leerling => [leerling.leerling_id, klas_id, vak_id, leerling.cijfer]);
     
-        // Execute the query
+        console.log("Executing SQL:", sql, "with values:", values); // Log the SQL and values
+    
         conn.query(sql, [values], function (err, result) {
             if (err) {
-                return res.status(500).send("Error saving grades");
+                console.error("Error executing query:", err); // Log the error
+                return res.status(500).send("Error saving grades: " + err.message); // Send detailed error message
             }
             res.send({ message: "Grades saved successfully", result });
         });
