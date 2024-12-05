@@ -38,6 +38,27 @@ module.exports = function (app) {
         });
     });
 
+    app.post("/cijfers", function (req, res) {
+        const { klas_id, vak_id, leerlingen } = req.body;
+    
+        // Validate input
+        if (!klas_id || !vak_id || !Array.isArray(leerlingen)) {
+            return res.status(400).send("klas_id, vak_id, and leerlingen are required");
+        }
+    
+        // Prepare SQL query to insert grades
+        const sql = "INSERT INTO cijfers (leerling_id, klas_id, vak_id, cijfer) VALUES ?";
+        const values = leerlingen.map(leerling => [leerling.leerling_id, klas_id, vak_id, leerling.cijfer]);
+    
+        // Execute the query
+        conn.query(sql, [values], function (err, result) {
+            if (err) {
+                return res.status(500).send("Error saving grades");
+            }
+            res.send({ message: "Grades saved successfully", result });
+        });
+    });
+
     app.get("/docenten", function (req, res) {
         let sql = "SELECT * FROM docenten";
         conn.query(sql, function (err, rows) {
