@@ -11,6 +11,7 @@ module.exports = {
     fontFamily: {
       schoolbell: ['Schoolbell', 'cursive'], // Logo font
       shadows: ['"Shadows Into Light Two"', 'cursive'], // Logo font 2
+      Rubik: ['Roboto', 'sans-serif'], // Standerd font
     },
   },
   },
