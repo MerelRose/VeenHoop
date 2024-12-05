@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import '../styles/App.css';
 import SideNav from './components/side-nav';
+import { useAuth } from '../AuthContext';
 
 function Home() {
   return (

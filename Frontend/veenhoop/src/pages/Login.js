@@ -3,8 +3,10 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import background from '../images/veenhoop.jpg';
 import '../styles/App.css';
+import { useAuth } from '../AuthContext';
 
 function Home() {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -41,6 +43,8 @@ function Home() {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', response.data.role);
 
+      login();
+
       // Redirect to /home after successful login
       navigate('/home');
     } catch (error) {
@@ -69,7 +73,7 @@ function Home() {
             <button type="button" className={`w-[185px] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 ${apiEndpoint === 'http://localhost:3001/loginstudent' && 'bg-blue-800 text-white'}`} onClick={() => setApiEndpoint('http://localhost:3001/loginstudent')}>
               Student
             </button>
-            <button type="button" className={`w-[185px] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ${apiEndpoint === 'http://localhost:3001/logindocent' && 'bg-blue-800 text-white'}`} onClick={() => setApiEndpoint('http://localhost:3001/logindocent')}>
+            <button type="button" className={` w-[185px] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ${apiEndpoint === 'http://localhost:3001/logindocent' && 'bg-blue-800 text-white'}`} onClick={() => setApiEndpoint('http://localhost:3001/logindocent')}>
               Leraar
             </button>
           </div>

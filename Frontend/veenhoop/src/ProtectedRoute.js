@@ -56,7 +56,7 @@ const App = () => {
   );
 };
 
-// App wrapped with AuthProvider only
+// App wrapped with BrowserRouter
 const AppWithRouter = () => {
   return (
     <AuthProvider>
