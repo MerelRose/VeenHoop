@@ -10,6 +10,7 @@ import Blokken from './pages/Blokken';
 import CijfersToe from './pages/Cijfers-toevoegen';
 import Klassen from './pages/klassen';
 import Settings from './pages/Settings';
+import Historische from './pages/Historische';
 
 // Header component
 function Header() {
@@ -49,6 +50,7 @@ const App = () => {
         <Route path="/blokken" element={isAuthenticated ? <Blokken /> : <Navigate to="/" />} />
         <Route path="/cijfers-toevoegen" element={isAuthenticated ? <CijfersToe /> : <Navigate to="/" />} />
         <Route path="/klassen" element={isAuthenticated ? <Klassen /> : <Navigate to="/" />} />
+        <Route path="/Historische" element={isAuthenticated ? <Historische /> : <Navigate to="/" />} />
         <Route path="/settings" element={isAuthenticated ? <Settings /> : <Navigate to="/" />} />
       </Routes>
       <Footer />
