@@ -1,9 +1,12 @@
 import React from 'react';
+import background from '../images/veenhoop.jpg';
 import '../styles/App.css';
 
 function Home() {
   return (
-    <div className='absolute left-[40%] top-[30%]'>
+    <>
+    <img src={background} className="absolute w-[70%] h-auto left-[15%]" alt="bg"/>
+    <div className='absolute left-[40%] top-[30%] bg-white'>
       <form>
         <label for='email' className='text-lg font-Rubik'>School e-mail:</label><br/>
         <input type="text" id="email" name="email" placeholder='School e-mail' className='p-2 rounded-lg w-96 border-inherit bg-gradient-to-r from-stone-300 to-stone-200'></input>
@@ -19,6 +22,7 @@ function Home() {
       <br/>
         <button type="button" class="w-[185px] py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Login</button>
       </div>
+    </>
   );
 }
   

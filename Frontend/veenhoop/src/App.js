@@ -16,7 +16,7 @@ function Header() {
 
   return (
     <>
-    <header className='w-screen bg-cyan-700 drop-shadow-lg'>
+    <header className='z-50 w-screen bg-cyan-700 drop-shadow-lg'>
       <img src={logo} className="h-40 auto w-" alt="logo" onClick={() => navigate('/Home')} />
       <div className='absolute top-10 left-[200px] text-center'>
         <p className='text-6xl text-white font-schoolbell'><strong>De VeenHoop</strong></p>
