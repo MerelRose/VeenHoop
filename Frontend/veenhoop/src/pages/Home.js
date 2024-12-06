@@ -7,7 +7,9 @@ function Home() {
   return (
     <>
     <SideNav/>
-    <div className='absolute top-[17%] w-[80%] left-[12%]'></div>
+    <div className='absolute top-[17%] w-[80%] left-[12%]'>
+    did you know that when ever you french fries on ketchup taste ketchup fries you? this this is because ketchup n taste fries on ketchup is reference to taste french fries on you taste
+    </div>
     </>
   );
 }
