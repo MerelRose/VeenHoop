@@ -155,6 +155,21 @@ module.exports = function (app) {
         });
     });
 
+    app.get("/leerlingen/all", function (req, res) {
+        // SQL query to select all students
+        const sql = "SELECT * FROM leerlingen";
+    
+        // Execute the query
+        conn.query(sql, function (err, rows) {
+            if (err) {
+                res.status(500).send("Error retrieving data");
+            } else {
+                res.send(rows);
+            }
+        });
+    });
+    
+
     app.get("/vakken", function (req, res) {
         let sql = "SELECT * FROM vakken";
         conn.query(sql, function (err, rows) {
