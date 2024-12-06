@@ -30,12 +30,12 @@ function HistorischeCijfers() {
     // Fetch leerlingen data
     const fetchLeerlingen = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/leerlingen', {
+        const response = await axios.get('http://localhost:3001/leerlingen/all', {
           headers: {
             'x-api-key': `${API_KEY}`
           }
         });
-        console.log('Leerlingen data:', response.data);
+        console.log('Leerlingen data:', response.data); // Log the response
         setLeerlingen(response.data);
       } catch (error) {
         console.error('Error fetching leerlingen:', error);
@@ -50,7 +50,7 @@ function HistorischeCijfers() {
             'x-api-key': `${API_KEY}`
           }
         });
-        console.log('Klassen data:', response.data);
+        console.log('Klassen data:', response.data); // Log the response
         setKlassen(response.data);
       } catch (error) {
         console.error('Error fetching klassen:', error);
@@ -65,7 +65,7 @@ function HistorischeCijfers() {
             'x-api-key': `${API_KEY}`
           }
         });
-        console.log('Vakken data:', response.data);
+        console.log('Vakken data:', response.data); // Log the response
         setVakken(response.data);
       } catch (error) {
         console.error('Error fetching vakken:', error);
@@ -78,7 +78,6 @@ function HistorischeCijfers() {
     fetchVakken();
   }, []);
 
-  // Helper functions to get names from IDs
   const getLeerlingNaam = (leerling_id) => {
     const leerling = leerlingen.find(l => l.leerling_id === leerling_id);
     return leerling ? leerling.name : 'Unknown';
