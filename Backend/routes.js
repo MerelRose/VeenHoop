@@ -9,7 +9,7 @@ module.exports = function (app) {
     app.use(express.json()); 
     app.use(express.urlencoded({ extended: false }));
 
-    app.post('/calculate-average/:vak_id', (req, res) => {
+    app.post('/gemiddelde/:vak_id', (req, res) => {
         const vakId = parseInt(req.params.vak_id);
 
         if (isNaN(vakId)) {
