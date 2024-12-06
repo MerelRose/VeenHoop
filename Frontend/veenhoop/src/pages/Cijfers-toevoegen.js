@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SideNav from './components/side-nav';
+import { useAuth } from '../AuthContext';
 
 const CijfersInvoer = () => {
     const [klas, setKlas] = useState('');
@@ -9,24 +10,45 @@ const CijfersInvoer = () => {
     const [selectedLeerlingen, setSelectedLeerlingen] = useState({});
     const [klassen, setKlassen] = useState([]);
     const [vakken, setVakken] = useState([]);
+    const [filteredVakken, setFilteredVakken] = useState([]);
     const [cijfers, setCijfers] = useState({}); // State to hold grades
 
     const API_KEY = "VeenHoop_APIKEY_G123242JDD224jJnndjh2774hdDJJWeruu338hu32fnfh"; // Your API key
 
+    // Log the logged-in user's ID
+    const { user } = useAuth(); // Access logged-in user's data
+    const docentId = user?.docent_id; // Retrieve docent_id
+
+    useEffect(() => {
+        console.log("Logged-in Docent ID:", docentId);
+    }, [docentId]);
+
     useEffect(() => {
         const fetchData = async () => {
-            const klassenRes = await axios.get('http://localhost:3001/klassen', { headers: { 'x-api-key': `${API_KEY}` } });
-            const vakkenRes = await axios.get('http://localhost:3001/vakken', { headers: { 'x-api-key': `${API_KEY}` } });
-            setKlassen(klassenRes.data);
-            setVakken(vakkenRes.data);
+            try {
+                const klassenRes = await axios.get('http://localhost:3001/klassen', { headers: { 'x-api-key': `${API_KEY}` } });
+                const vakkenRes = await axios.get('http://localhost:3001/vakken', { headers: { 'x-api-key': `${API_KEY}` } });
+                
+                setKlassen(klassenRes.data);
+                setVakken(vakkenRes.data);
+
+                // Filter vakken for the logged-in docent
+                const docentVakken = vakkenRes.data.filter((vak) => vak.docent_id === docentId);
+                setFilteredVakken(docentVakken);
+
+                // Log fetched data for debugging
+                console.log("All Vakken:", vakkenRes.data);
+                console.log("Filtered Vakken for Docent:", docentVakken);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
         };
         fetchData();
-    }, []);
+    }, [docentId]); // Dependency on logged-in docent ID
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Prepare the data to send
         const leerlingenData = Object.keys(selectedLeerlingen)
             .filter(leerlingId => selectedLeerlingen[leerlingId]) // Only include selected students
             .map(leerlingId => ({
@@ -34,7 +56,6 @@ const CijfersInvoer = () => {
                 cijfer: cijfers[leerlingId] // Get the grade from state
             }));
 
-        // Send the data to the backend
         try {
             const response = await axios.post('http://localhost:3001/cijfers', {
                 klas_id: klas,
@@ -61,16 +82,22 @@ const CijfersInvoer = () => {
 
     const handleKlasChange = async (e) => {
         setKlas(e.target.value);
-        const leerlingenRes = await axios.get(`http://localhost:3001/leerlingen?klas_id=${e.target.value}`, {
-            headers: {
-                'x-api-key': `${API_KEY}`
-            }
-        });
-        setLeerlingen(leerlingenRes.data);
+        try {
+            const leerlingenRes = await axios.get(`http://localhost:3001/leerlingen?klas_id=${e.target.value}`, {
+                headers: {
+                    'x-api-key': `${API_KEY}`
+                }
+            });
+            setLeerlingen(leerlingenRes.data);
+
+            // Log retrieved leerlingen for debugging
+            console.log(`Leerlingen for klas ${e.target.value}:`, leerlingenRes.data);
+        } catch (error) {
+            console.error("Error fetching leerlingen:", error);
+        }
     };
 
     const handleCijferChange = (leerlingId, value) => {
-        // Validate input to ensure it's between 1.0 and 10.0
         const numericValue = parseFloat(value);
         if (numericValue >= 1.0 && numericValue <= 10.0) {
             setCijfers((prev) => ({
@@ -78,7 +105,6 @@ const CijfersInvoer = () => {
                 [leerlingId]: numericValue
             }));
         } else {
-            // Optionally, you can show an alert or some feedback
             alert("Cijfer moet tussen 1.0 en 10.0 zijn.");
         }
     };
@@ -101,7 +127,7 @@ const CijfersInvoer = () => {
                         <label htmlFor="vak">Vak:</label>
                         <select id="vak" value={vak} onChange={(e) => setVak(e.target.value)}>
                             <option value="">Selecteer een vak</option>
-                            {vakken.map((v) => (
+                            {filteredVakken.map((v) => (
                                 <option key={v.vak_id} value={v.vak_id}>{v.naam}</option>
                             ))}
                         </select>

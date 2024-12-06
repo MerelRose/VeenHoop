@@ -115,6 +115,17 @@ module.exports = function (app) {
         });
     });
 
+    app.get("/historische", function (req, res) {
+        let sql = "SELECT * FROM historische_cijfers";
+        conn.query(sql, function (err, rows) {
+            if (err) {
+                res.status(500).send("Error retrieving data");
+            } else {
+                res.send(rows);
+            }
+        });
+    });
+
 
 
 };

@@ -36,7 +36,7 @@ const registerDocent = async (req, res) => {
                     const token = generateToken(result.insertId, 1); // Role ID 1 corresponds to 'user'
 
                     res.status(201).json({
-                        id: result.insertId, // MySQL returns inserted ID
+                        docent_id: result.insertId, // MySQL returns inserted ID
                         name: docent.name,
                         email: docent.email,
                         role: 'docent', // Automatically set to 'user'

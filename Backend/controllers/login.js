@@ -41,12 +41,12 @@ const loginDocent = async (req, res) => {
 
                             // If passwords match, generate a JWT and return user info including the role
                             return res.json({
-                                id: docent.id,
+                                docent_id: docent.docent_id, // Rename `id` to `docent_id`
                                 name: docent.name,
                                 email: docent.email,
                                 role: role, // Return the role
                                 token: generateToken(docent.id, role), // Include role in JWT token
-                            });
+                            });                            
                         } else {
                             return res.status(400).json({ message: "Role not found" });
                         }
