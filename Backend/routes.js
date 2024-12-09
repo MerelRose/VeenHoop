@@ -79,6 +79,32 @@ module.exports = function (app) {
     });
 
     app.get("/cijfers", function (req, res) {
+        const leerlingId = req.query.leerling_id;
+    
+        // Validate if the leerling_id is provided
+        if (!leerlingId) {
+            return res.status(400).send("Missing 'leerling_id' query parameter");
+        }
+    
+        // SQL query to fetch cijfers for the specified leerling_id
+        const sql = "SELECT * FROM cijfers WHERE leerling_id = ?";
+        
+        conn.query(sql, [leerlingId], function (err, rows) {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Error retrieving data");
+            } else {
+                if (rows.length === 0) {
+                    res.status(404).send("No cijfers found for the specified leerling_id");
+                } else {
+                    res.json(rows);
+                }
+            }
+        });
+    });
+
+
+    app.get("/cijfers", function (req, res) {
         let sql = "SELECT * FROM cijfers";
         conn.query(sql, function (err, rows) {
             if (err) {
@@ -102,29 +128,6 @@ module.exports = function (app) {
             }
         });
     });
-
-
-    // app.post("/cijfers", function (req, res) {
-    //     const { klas_id, leerlingen } = req.body;
-    
-    //     // Validate input
-    //     if (!klas_id | !Array.isArray(leerlingen)) {
-    //         return res.status(400).send("vak_id, and leerlingen are required");
-    //     }
-    
-    //     const sql = "INSERT INTO cijfers (leerling_id, vak_id, cijfer) VALUES ?";
-    //     const values = leerlingen.map(leerling => [leerling.leerling_id, vak_id, leerling.cijfer]);
-    
-    //     console.log("Executing SQL:", sql, "with values:", values); // Log the SQL and values
-    
-    //     conn.query(sql, [values], function (err, result) {
-    //         if (err) {
-    //             console.error("Error executing query:", err); // Log the error
-    //             return res.status(500).send("Error saving grades: " + err.message); // Send detailed error message
-    //         }
-    //         res.send({ message: "Grades saved successfully", result });
-    //     });
-    // });
 
     app.get("/docenten", function (req, res) {
         let sql = "SELECT * FROM docenten";
