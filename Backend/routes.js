@@ -78,6 +78,31 @@ module.exports = function (app) {
         });
     });
 
+    app.get("/klassen", function (req, res) {
+        const klasId = req.query.klas_id;
+    
+        // Validate if the leerling_id is provided
+        if (!klasId) {
+            return res.status(400).send("Missing 'klas_id' query parameter");
+        }
+    
+        // SQL query to fetch cijfers for the specified leerling_id
+        const sql = "SELECT * FROM cijfers WHERE klas_id = ?";
+        
+        conn.query(sql, [klasId], function (err, rows) {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Error retrieving data");
+            } else {
+                if (rows.length === 0) {
+                    res.status(404).send("No cijfers found for the specified klas_id");
+                } else {
+                    res.json(rows);
+                }
+            }
+        });
+    });
+
     app.get("/cijfers", function (req, res) {
         const leerlingId = req.query.leerling_id;
     
