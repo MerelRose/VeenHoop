@@ -88,7 +88,7 @@ const loginLeerling = async (req, res) => {
                 if (isMatch) {
                     // If passwords match, generate a JWT and return user info
                     return res.json({
-                        id: user.id,
+                        leerling_id: user.leerling_id,
                         name: user.name,
                         email: user.email,
                         token: generateToken(user.id), // Generate JWT token
