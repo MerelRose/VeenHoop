@@ -11,7 +11,7 @@ function Home() {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [apiEndpoint, setApiEndpoint] = useState('http://localhost:3001/loginLeerling');
+    const [apiEndpoint, setApiEndpoint] = useState('http://localhost:3001/loginLeerling'); // Default to student login
     const navigate = useNavigate();
 
     const API_KEY = 'VeenHoop_APIKEY_G123242JDD224jJnndjh2774hdDJJWeruu338hu32fnfh';
@@ -20,7 +20,7 @@ function Home() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            navigate('/home');
+            navigate('/home'); // Redirect to /home if already logged in
         }
     }, [navigate]);
 
