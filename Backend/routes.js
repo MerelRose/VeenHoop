@@ -90,26 +90,41 @@ module.exports = function (app) {
     });
 
     app.post("/cijfers", function (req, res) {
-        const { klas_id, vak_id, leerlingen } = req.body;
-    
-        // Validate input
-        if (!klas_id || !vak_id || !Array.isArray(leerlingen)) {
-            return res.status(400).send("klas_id, vak_id, and leerlingen are required");
-        }
-    
-        const sql = "INSERT INTO cijfers (leerling_id, klas_id, vak_id, cijfer) VALUES ?";
-        const values = leerlingen.map(leerling => [leerling.leerling_id, klas_id, vak_id, leerling.cijfer]);
-    
-        console.log("Executing SQL:", sql, "with values:", values); // Log the SQL and values
-    
-        conn.query(sql, [values], function (err, result) {
+        let obj1 = req.body[0];
+        let arr1 = Object.keys(obj1).map((key) => [obj1[key]]);
+        let sql = `INSERT INTO cijfers (leerling_id, vak_id, cijfer) VALUES (?, ?, ?)`;
+        conn.query(sql, arr1, function (err, result) {
             if (err) {
-                console.error("Error executing query:", err); // Log the error
-                return res.status(500).send("Error saving grades: " + err.message); // Send detailed error message
+                console.error(err);
+                res.status(500).send("Error adding the Cijfer");
+            } else {
+                res.send("Cijfer successfully added!");
             }
-            res.send({ message: "Grades saved successfully", result });
         });
     });
+
+
+    // app.post("/cijfers", function (req, res) {
+    //     const { klas_id, leerlingen } = req.body;
+    
+    //     // Validate input
+    //     if (!klas_id | !Array.isArray(leerlingen)) {
+    //         return res.status(400).send("vak_id, and leerlingen are required");
+    //     }
+    
+    //     const sql = "INSERT INTO cijfers (leerling_id, vak_id, cijfer) VALUES ?";
+    //     const values = leerlingen.map(leerling => [leerling.leerling_id, vak_id, leerling.cijfer]);
+    
+    //     console.log("Executing SQL:", sql, "with values:", values); // Log the SQL and values
+    
+    //     conn.query(sql, [values], function (err, result) {
+    //         if (err) {
+    //             console.error("Error executing query:", err); // Log the error
+    //             return res.status(500).send("Error saving grades: " + err.message); // Send detailed error message
+    //         }
+    //         res.send({ message: "Grades saved successfully", result });
+    //     });
+    // });
 
     app.get("/docenten", function (req, res) {
         let sql = "SELECT * FROM docenten";
