@@ -11,7 +11,7 @@ function Home() {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [apiEndpoint, setApiEndpoint] = useState('http://localhost:3001/loginstudent'); // Default to student login
+    const [apiEndpoint, setApiEndpoint] = useState('http://localhost:3001/loginLeerling');
     const navigate = useNavigate();
 
     const API_KEY = 'VeenHoop_APIKEY_G123242JDD224jJnndjh2774hdDJJWeruu338hu32fnfh';
@@ -20,7 +20,7 @@ function Home() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            navigate('/home'); // Redirect to /home if already logged in
+            navigate('/home');
         }
     }, [navigate]);
 
@@ -34,7 +34,8 @@ function Home() {
           const userData = {
               token: response.data.token,
               role: response.data.role,
-              docent_id: response.data.docent_id || null, // Map 'id' to 'docent_id'
+              docent_id: response.data.docent_id || null,
+              leerling_id: response.data.leerling_id || null,
               name: response.data.name
           };
   
@@ -88,8 +89,8 @@ function Home() {
                     <div className="mb-4">
                         <button 
                             type="button" 
-                            className={`w-[185px] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 ${apiEndpoint === 'http://localhost:3001/loginstudent' && 'bg-blue-800 text-white'}`} 
-                            onClick={() => setApiEndpoint('http://localhost:3001/loginstudent')}
+                            className={`w-[185px] text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 ${apiEndpoint === 'http://localhost:3001/loginLeerling' && 'bg-blue-800 text-white'}`} 
+                            onClick={() => setApiEndpoint('http://localhost:3001/loginLeerling')}
                         >
                             Student
                         </button>
