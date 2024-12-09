@@ -14,8 +14,7 @@ function GradesPage() {
 
   // Fetch classes on component mount
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/klassen", {
+    axios.get("http://localhost:3001/klassen", {
         headers: {
           'x-api-key': `${API_KEY}` 
         }
@@ -28,36 +27,41 @@ function GradesPage() {
   useEffect(() => {
     if (selectedClass) {
       setLoading(true);
-
+  
       // Fetch students in the selected class
       const fetchStudents = axios.get(`http://localhost:3001/leerlingen`, {
-        params: { klas_id: selectedClass }, // Filter by selected class
+        params: { klas_id: selectedClass },
         headers: {
           'x-api-key': `${API_KEY}`
         }
       });
-
+  
       // Fetch lessons for the selected class
       const fetchLessons = axios.get(`http://localhost:3001/vakken`, {
-        params: { klas_id: selectedClass }, // Filter by selected class
+        params: { klas_id: selectedClass },
         headers: {
           'x-api-key': `${API_KEY}`
         }
       });
-
-      // Fetch grades for students in the selected class
-      const fetchGrades = axios.get(`http://localhost:3001/cijfers`, {
-        params: { klas_id: selectedClass }, // Filter grades by selected class
-        headers: {
-          'x-api-key': `${API_KEY}`
-        }
-      });
-
-      Promise.all([fetchStudents, fetchLessons, fetchGrades])
-        .then(([studentsRes, lessonsRes, gradesRes]) => {
-          setStudents(studentsRes.data); // Set students from response
-          setLessons(lessonsRes.data); // Set lessons from response
-          setGrades(gradesRes.data); // Set grades from response
+  
+      Promise.all([fetchStudents, fetchLessons])
+        .then(async ([studentsRes, lessonsRes]) => {
+          setStudents(studentsRes.data);
+          setLessons(lessonsRes.data);
+  
+          // Fetch grades for students in the selected class
+          const gradesPromises = studentsRes.data.map(student => 
+            axios.get(`http://localhost:3001/cijfers`, {
+              params: { klas_id: selectedClass, leerling_id: student.leerling_id },
+              headers: {
+                'x-api-key': `${API_KEY}`
+              }
+            })
+          );
+  
+          const gradesResponses = await Promise.all(gradesPromises);
+          const allGrades = gradesResponses.flatMap(res => res.data);
+          setGrades(allGrades);
         })
         .catch((error) => console.error("Error fetching data:", error))
         .finally(() => setLoading(false));
