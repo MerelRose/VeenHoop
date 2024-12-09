@@ -1,25 +1,102 @@
-import React from 'react';
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import '../styles/App.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useAuth } from '../AuthContext';
 import SideNav from './components/side-nav';
 
-function Cijfers() {
-  return (
-    <>
-    <SideNav/>
-    <div className='absolute top-[17%] w-[80%] left-[12%]'>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ac vulputate ex, sit amet malesuada purus. Nulla facilisi. Donec sodales orci maximus ligula tristique, eu faucibus velit viverra. Maecenas condimentum, felis ut tincidunt sodales, felis quam lacinia leo, ut lobortis dui justo dapibus massa. Vivamus commodo eleifend dui, volutpat mollis tellus bibendum semper. In malesuada maximus arcu suscipit commodo. Proin ultrices iaculis augue, quis pulvinar ipsum euismod a. Etiam rhoncus dolor enim, vel volutpat metus viverra ut. Quisque id sodales ante, et porta dolor. Suspendisse iaculis justo ac molestie ullamcorper. Nam euismod, quam aliquet lacinia viverra, diam justo vehicula arcu, at mollis elit nunc vitae dui. Donec posuere nibh a maximus dapibus. In nec nibh libero. Aliquam at magna nisl.
+const GradesOverview = () => {
+    const [grades, setGrades] = useState([]);
+    const [docenten, setDocenten] = useState({});
+    const [vakken, setVakken] = useState({});
+    const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+    const API_KEY = 'VeenHoop_APIKEY_G123242JDD224jJnndjh2774hdDJJWeruu338hu32fnfh';
 
-Nullam et nulla ut quam venenatis volutpat eget eu purus. Cras imperdiet nibh ut lacus maximus imperdiet. Vestibulum feugiat luctus dapibus. Pellentesque luctus mollis magna. Donec tincidunt erat lacus, ac feugiat tellus interdum sit amet. Nullam molestie nibh consectetur neque accumsan, mattis luctus mi suscipit. Suspendisse vestibulum sit amet libero quis posuere. Vestibulum scelerisque ligula mauris, vitae consequat nunc consequat a. Cras est ligula, laoreet at erat ac, lacinia mattis velit. Suspendisse egestas, sem quis eleifend dictum, justo eros gravida magna, a vestibulum eros est at lectus.
+    useEffect(() => {
+        const fetchGrades = async () => {
+            try {
+                // Check if leerling_id is available
+                const leerlingId = user?.leerling_id;
+                if (!leerlingId) {
+                    console.error('leerling_id is not available.');
+                    setLoading(false);
+                    return;
+                }
 
-Curabitur vel tincidunt nibh. Vestibulum vehicula, nulla nec pulvinar tempor, sapien tellus sodales erat, quis lobortis ex urna quis elit. Fusce quis lacus et arcu pulvinar feugiat. Fusce eros mauris, finibus vel dolor vel, porta placerat dui. Nam molestie posuere ligula elementum luctus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas vulputate metus quis magna sagittis, quis rutrum odio sodales. Vivamus pulvinar euismod arcu, eu vehicula enim. Praesent nec turpis eu velit aliquam vestibulum. Aliquam lectus sem, rutrum quis metus vitae, faucibus laoreet enim. Donec at interdum dolor. Integer commodo velit id turpis pharetra ultricies. Donec purus sem, imperdiet sit amet lacus non, malesuada iaculis arcu. Proin gravida eu massa nec viverra.
+                // Fetch grades for the logged-in leerling_id
+                const gradesRes = await axios.get(
+                    `http://localhost:3001/cijfers?leerling_id=${leerlingId}`,
+                    { headers: { 'x-api-key': API_KEY } }
+                );
+                setGrades(gradesRes.data);
 
-Cras placerat elementum quam sit amet imperdiet. Nunc vel vehicula lectus. Vestibulum maximus, ligula ornare tempus posuere, elit dui ultrices felis, et commodo urna nisi et elit. Suspendisse nibh enim, varius vel tellus vitae, facilisis auctor nibh. Ut ut imperdiet mauris. Nunc accumsan, metus eget laoreet tincidunt, nunc ipsum dictum urna, a scelerisque sem eros eget nulla. Aliquam vel efficitur arcu. Aenean et ante eget felis ultricies volutpat. In nec purus magna. Etiam efficitur urna nec sollicitudin suscipit. Etiam vitae lacus nec ligula mattis consequat ac at lectus. Vestibulum maximus, leo a interdum bibendum, erat risus varius neque, a iaculis tortor nisi vitae eros.
+                // Fetch docenten
+                const docentenRes = await axios.get('http://localhost:3001/docenten', {
+                    headers: { 'x-api-key': API_KEY },
+                });
+                const docentenMap = {};
+                docentenRes.data.forEach((docent) => {
+                    docentenMap[docent.docent_id] = docent.name;
+                });
+                setDocenten(docentenMap);
 
-Curabitur nibh ante, vestibulum nec dapibus vitae, finibus et augue. Aenean sodales sodales ex. Phasellus ac orci metus. Etiam laoreet diam in dolor bibendum tincidunt. Sed vel cursus augue. Vestibulum a libero eget elit egestas vulputate eu vel dolor. Nam consectetur massa luctus dolor dictum consequat. In hac habitasse platea dictumst.
-    </div>
-    </>
-  );
-}
-  
-export default Cijfers;
+                // Fetch vakken
+                const vakkenRes = await axios.get('http://localhost:3001/vakken', {
+                    headers: { 'x-api-key': API_KEY },
+                });
+                const vakkenMap = {};
+                vakkenRes.data.forEach((vak) => {
+                    vakkenMap[vak.vak_id] = vak.naam;
+                });
+                setVakken(vakkenMap);
+
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching grades or metadata:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchGrades();
+    }, [user?.leerling_id]);
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    return (
+        <>
+            <SideNav />
+            <div className="absolute top-[17%] w-[80%] left-[12%]">
+                <h1 className="text-2xl font-bold">My Grades</h1>
+                {grades.length > 0 ? (
+                    <table className="w-full border border-collapse border-gray-300 table-auto">
+                        <thead>
+                            <tr>
+                                <th className="p-2 border border-gray-300">Vak</th>
+                                <th className="p-2 border border-gray-300">Blok</th>
+                                <th className="p-2 border border-gray-300">Cijfer</th>
+                                <th className="p-2 border border-gray-300">Docent</th>
+                                <th className="p-2 border border-gray-300">Ingevoerd op</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {grades.map((grade) => (
+                                <tr key={grade.cijfer_id}>
+                                    <td className="p-2 border border-gray-300">{vakken[grade.vak_id] || 'N/A'}</td>
+                                    <td className="p-2 border border-gray-300">{grade.blok_id}</td>
+                                    <td className="p-2 border border-gray-300">{grade.cijfer}</td>
+                                    <td className="p-2 border border-gray-300">{docenten[grade.docent_id] || 'N/A'}</td>
+                                    <td className="p-2 border border-gray-300">{new Date(grade.created_at).toLocaleDateString()}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p>No grades found for this student.</p>
+                )}
+            </div>
+        </>
+    );
+};
+
+export default GradesOverview;
