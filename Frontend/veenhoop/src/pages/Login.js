@@ -58,7 +58,7 @@ function Home() {
     return (
         <>
             <img src={background} className="absolute w-[70%] h-auto left-[15%]" alt="bg" />
-            <div className="absolute left-[40%] top-[30%] bg-white p-5 h-[55%] rounded-lg">
+            <div className="absolute p-5 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg top-1/2 left-1/2 h-fit">
                 <form onSubmit={(e) => {
                     e.preventDefault();
                     handleLogin();
@@ -104,7 +104,7 @@ function Home() {
                     </div>
                     <button 
                         type="submit" 
-                        className="bottom-5 absolute w-[185px] py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
+                        className="bottom-5  w-[185px] py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
                     >
                         Login
                     </button>
