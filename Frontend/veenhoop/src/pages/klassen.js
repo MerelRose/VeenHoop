@@ -71,7 +71,7 @@ function GradesPage() {
   return (
     <>
       <SideNav />
-      <div className="absolute top-[17%] w-[80%] left-[12%]">
+      <div className="absolute flex-1 top-44 w-fit left-56">
         <h1>Grades Overview</h1>
         <label htmlFor="classDropdown">Select Class:</label>
         <select

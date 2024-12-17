@@ -41,8 +41,9 @@ const App = () => {
   const { isAuthenticated } = useAuth(); // Get authentication status from context
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Header />
+      <main className="flex-1">
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
@@ -53,6 +54,7 @@ const App = () => {
         <Route path="/Historische" element={isAuthenticated ? <Historische /> : <Navigate to="/" />} />
         <Route path="/settings" element={isAuthenticated ? <Settings /> : <Navigate to="/" />} />
       </Routes>
+      </main>
       <Footer />
     </div>
   );
