@@ -76,13 +76,12 @@ const registerLeerling = async (req, res) => {
                 connection.query('INSERT INTO leerlingen SET ?', user, (err, result) => {
                     if (err) throw err;
 
-
                     res.status(201).json({
                         leerling_id: result.insertId, // MySQL returns inserted ID
                         name: user.name,
                         email: user.email,
                         password: user.password,
-                        klas_id: user.klas_id
+                        klas_id: user.klas_id,
                     });
                 });
             }

@@ -69,9 +69,9 @@ function StudentsAndClassesPage() {
     }
   
     const studentData = {
-      naam: newStudentName,
+      name: newStudentName,
       email: newStudentEmail,
-      wachtwoord: newStudentPassword,
+      password: newStudentPassword,
       klas_id: selectedClass,
     };
   
