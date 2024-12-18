@@ -117,7 +117,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get("/klassen", function (req, res) {
+    app.get("/klassen/all", function (req, res) {
         let sql = "SELECT * FROM klassen";
         conn.query(sql, function (err, rows) {
             if (err) {
