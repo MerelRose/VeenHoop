@@ -56,6 +56,20 @@ module.exports = function (app) {
         });
     });
 
+    app.post("/klassen", function (req, res) {
+        let obj1 = req.body[0];
+        let arr1 = Object.keys(obj1).map((key) => [obj1[key]]);
+        let sql = `INSERT INTO klassen (naam) VALUES (?)`;
+        conn.query(sql, arr1, function (err, result) {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Error adding the klas");
+            } else {
+                res.send("klas successfully added!");
+            }
+        });
+    });
+
     app.get("/cijfers", function (req, res) {
         const leerlingId = req.query.leerling_id;
     
@@ -159,6 +173,7 @@ module.exports = function (app) {
             }
         });
     });
+    
     app.delete("/docenten/:id", function (req, res) {
         let sql = "DELETE FROM docenten WHERE docent_id = ?";
         conn.query(sql, [req.params.id], function (err, result) {
@@ -260,20 +275,6 @@ module.exports = function (app) {
             }
         });
     });
-    app.delete("/leerlingen/:id", function (req, res) {
-        let sql = "DELETE FROM leerlingen WHERE leerling_id = ?";
-        conn.query(sql, [req.params.id], function (err, result) {
-            if (err) {
-                res.status(500).send("Error deleting data");
-            } else if (result.affectedRows === 0) {
-                res.status(404).send("Leerling niet gevonden");
-            } else {
-                res.send({ message: "Leerling is verwijderd"});
-            }
-        });
-     });
-    
-    
 
     app.get("/vakken", function (req, res) {
         let sql = "SELECT * FROM vakken";

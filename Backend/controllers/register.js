@@ -41,7 +41,6 @@ const registerDocent = async (req, res) => {
                         email: docent.email,
                         role: 'docent', // Automatically set to 'user'
                         id: result.insertId, // MySQL returns inserted ID
-                        token: token, // JWT token returned in the response
                     });
                 });
             }
@@ -77,15 +76,13 @@ const registerLeerling = async (req, res) => {
                 connection.query('INSERT INTO leerlingen SET ?', user, (err, result) => {
                     if (err) throw err;
 
-                    // Generate token
-                    const token = generateToken(result.insertId);
 
                     res.status(201).json({
-                        id: result.insertId, // MySQL returns inserted ID
+                        leerling_id: result.insertId, // MySQL returns inserted ID
                         name: user.name,
                         email: user.email,
-                        klas_id: user.klas_id,
-                        token: token, // JWT token returned in the response
+                        password: user.password,
+                        klas_id: user.klas_id
                     });
                 });
             }
