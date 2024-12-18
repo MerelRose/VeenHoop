@@ -26,7 +26,7 @@ const CijfersInvoer = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const klassenRes = await axios.get('http://localhost:3001/klassen', { headers: { 'x-api-key': `${API_KEY}` } });
+                const klassenRes = await axios.get('http://localhost:3001/klassen/all', { headers: { 'x-api-key': `${API_KEY}` } });
                 const vakkenRes = await axios.get('http://localhost:3001/vakken', { headers: { 'x-api-key': `${API_KEY}` } });
                 
                 setKlassen(klassenRes.data);
@@ -65,11 +65,17 @@ const CijfersInvoer = () => {
                 headers: {
                     'x-api-key': `${API_KEY}`
                 }
+                
             });
             alert(response.data.message); // Show success message
         } catch (error) {
             console.error("Error saving grades:", error);
             alert("Er is een fout opgetreden bij het opslaan van de cijfers.");
+            console.log("Submitting data:", {
+                klas_id: klas,
+                vak_id: vak,
+                leerlingen: leerlingenData
+            });
         }
     };
 
