@@ -11,7 +11,14 @@ function StudentsAndClassesPage() {
   const [newStudentPassword, setNewStudentPassword] = useState("");
   const [selectedClass, setSelectedClass] = useState(null);
   const [showAllStudents, setShowAllStudents] = useState(false);
+
   const API_KEY = "VeenHoop_APIKEY_G123242JDD224jJnndjh2774hdDJJWeruu338hu32fnfh";
+
+  // Gedeelde Axios-instantie met API-sleutel
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:3001",
+    headers: { 'x-api-key': API_KEY }
+  });
 
   useEffect(() => {
     fetchClasses();
@@ -19,39 +26,29 @@ function StudentsAndClassesPage() {
   }, []);
 
   const fetchClasses = () => {
-    axios.get("http://localhost:3001/klassen/all", {
-      headers: { 'x-api-key': API_KEY }
-    })
+    axiosInstance.get("/klassen/all")
       .then((response) => setClasses(response.data))
       .catch((error) => console.error("Error fetching classes:", error));
   };
 
   const fetchStudents = (classId) => {
-    axios.get(`http://localhost:3001/leerlingen/all`, {
-      params: { klas_id: classId },
-      headers: { 'x-api-key': API_KEY }
+    axiosInstance.get("/leerlingen/all", {
+      params: { klas_id: classId }
     })
       .then((response) => setStudents(response.data))
       .catch((error) => console.error("Error fetching students:", error));
   };
 
   const fetchAllStudents = () => {
-    axios.get("http://localhost:3001/leerlingen/all", {
-      headers: { 'x-api-key': API_KEY }
-    })
-      .then((response) => {
-        console.log(response.data); // Controleer de structuur van de data
-        setStudents(response.data);
-      })
+    axiosInstance.get("/leerlingen/all")
+      .then((response) => setStudents(response.data))
       .catch((error) => console.error("Error fetching all students:", error));
   };
 
   const addClass = () => {
     if (!newClassName) return;
 
-    axios.post("http://localhost:3001/klassen", { naam: newClassName }, {
-      headers: { 'x-api-key': API_KEY }
-    })
+    axiosInstance.post("/klassen", { naam: newClassName })
       .then(() => {
         setNewClassName("");
         fetchClasses();
@@ -60,23 +57,31 @@ function StudentsAndClassesPage() {
   };
 
   const deleteClass = (classId) => {
-    axios.delete(`http://localhost:3001/klassen/${classId}`, {
-      headers: { 'x-api-key': API_KEY }
-    })
+    axiosInstance.delete(`/klassen/${classId}`)
       .then(() => fetchClasses())
       .catch((error) => console.error("Error deleting class:", error));
   };
 
   const addStudent = () => {
-    if (!newStudentName || !newStudentEmail || !newStudentPassword || !selectedClass) return;
+    if (!newStudentName || !newStudentEmail || !newStudentPassword || !selectedClass) {
+      console.error("All fields are required");
+      return;
+    }
   
-    axios.post("http://localhost:3001/leerlingen", {
+    const studentData = {
       naam: newStudentName,
       email: newStudentEmail,
       wachtwoord: newStudentPassword,
-      klas_id: selectedClass
-    }, {
-      headers: { 'x-api-key': API_KEY }
+      klas_id: selectedClass,
+    };
+  
+    console.log("Sending request:", studentData);
+  
+    axios.post("http://localhost:3001/registerLeerling", studentData, {
+      headers: {
+        'x-api-key': API_KEY,
+        'Content-Type': 'application/json'
+      }
     })
       .then(() => {
         setNewStudentName("");
@@ -84,14 +89,15 @@ function StudentsAndClassesPage() {
         setNewStudentPassword("");
         fetchStudents(selectedClass);
       })
-      .catch((error) => console.error("Error adding student:", error));
+      .catch((error) => {
+        console.error("Error adding student:", error.response?.data || error.message);
+      });
   };
+  
   
 
   const deleteStudent = (studentId) => {
-    axios.delete(`http://localhost:3001/leerlingen/${studentId}`, {
-      headers: { 'x-api-key': API_KEY }
-    })
+    axiosInstance.delete(`/leerlingen/${studentId}`)
       .then(() => fetchStudents(selectedClass))
       .catch((error) => console.error("Error deleting student:", error));
   };
@@ -150,6 +156,7 @@ function StudentsAndClassesPage() {
               />
               <button onClick={addStudent}>Add Student</button>
             </div>
+
             <ul>
               {students.filter(student => student.klas_id === selectedClass).map((student) => (
                 <li key={student.leerling_id}>

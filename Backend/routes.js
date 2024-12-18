@@ -1,5 +1,6 @@
 const express = require('express');
 const conn = require("./conn");
+const bcrypt = require("bcryptjs");
 
 const { loginDocent, loginLeerling } = require("./controllers/login");
 const { registerDocent, registerLeerling } = require("./controllers/register");
@@ -117,6 +118,60 @@ module.exports = function (app) {
         });
     });
 
+    app.put("/docenten/:id", async function (req, res) {
+        const docentId = req.params.id;
+        const { name, email, password, role_id } = req.body;
+    
+        if (!name || !email || !role_id) {
+            return res.status(400).send("Missing 'name', 'email', or 'role_id' in request body");
+        }
+    
+        let hashedPassword = null;
+    
+        if (password) {
+            try {
+                hashedPassword = await bcrypt.hash(password, 10);
+            } catch (err) {
+                console.error("Error hashing password:", err);
+                return res.status(500).send("Error processing password");
+            }
+        }
+    
+        const sql = `
+            UPDATE docenten 
+            SET name = ?, email = ?, 
+            ${password ? "password = ?," : ""} 
+            role_id = ?, updated_at = CURRENT_TIMESTAMP 
+            WHERE docent_id = ?`;
+    
+        const params = password
+            ? [name, email, hashedPassword, role_id, docentId]
+            : [name, email, role_id, docentId];
+    
+        conn.query(sql, params, function (err, result) {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Error updating docent");
+            } else if (result.affectedRows === 0) {
+                res.status(404).send("Docent not found");
+            } else {
+                res.send({ message: "Docent updated successfully" });
+            }
+        });
+    });
+    app.delete("/docenten/:id", function (req, res) {
+        let sql = "DELETE FROM docenten WHERE docent_id = ?";
+        conn.query(sql, [req.params.id], function (err, result) {
+            if (err) {
+                res.status(500).send("Error deleting data");
+            } else if (result.affectedRows === 0) {
+                res.status(404).send("docent niet gevonden");
+            } else {
+                res.send({ message: "docent is verwijderd"});
+            }
+        });
+     });
+
     app.get("/klassen/all", function (req, res) {
         let sql = "SELECT * FROM klassen";
         conn.query(sql, function (err, rows) {
@@ -163,6 +218,61 @@ module.exports = function (app) {
             }
         });
     });
+
+    app.put("/leerlingen/:id", async function (req, res) {
+        const leerlingId = req.params.id;
+        const { name, email, password, klas_id } = req.body;
+    
+        if (!name || !email || !klas_id) {
+            return res.status(400).send("Missing 'name', 'email', or 'klas_id' in request body");
+        }
+    
+        let hashedPassword = null;
+    
+        if (password) {
+            try {
+                hashedPassword = await bcrypt.hash(password, 10);
+            } catch (err) {
+                console.error("Error hashing password:", err);
+                return res.status(500).send("Error processing password");
+            }
+        }
+    
+        const sql = `
+            UPDATE leerlingen 
+            SET name = ?, email = ?, 
+            ${password ? "password = ?," : ""} 
+            klas_id = ?, updated_at = CURRENT_TIMESTAMP 
+            WHERE leerling_id = ?`;
+    
+        const params = password
+            ? [name, email, hashedPassword, klas_id, leerlingId]
+            : [name, email, klas_id, leerlingId];
+    
+        conn.query(sql, params, function (err, result) {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Error updating leerling");
+            } else if (result.affectedRows === 0) {
+                res.status(404).send("Leerling not found");
+            } else {
+                res.send({ message: "Leerling updated successfully" });
+            }
+        });
+    });
+    app.delete("/leerlingen/:id", function (req, res) {
+        let sql = "DELETE FROM leerlingen WHERE leerling_id = ?";
+        conn.query(sql, [req.params.id], function (err, result) {
+            if (err) {
+                res.status(500).send("Error deleting data");
+            } else if (result.affectedRows === 0) {
+                res.status(404).send("Leerling niet gevonden");
+            } else {
+                res.send({ message: "Leerling is verwijderd"});
+            }
+        });
+     });
+    
     
 
     app.get("/vakken", function (req, res) {
