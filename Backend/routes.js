@@ -70,6 +70,20 @@ module.exports = function (app) {
         });
     });
 
+    app.delete("/klassen/:id", function (req, res) {
+        let sql = "DELETE FROM klassen WHERE klas_id = ?";
+        conn.query(sql, [req.params.id], function (err, result) {
+            if (err) {
+                res.status(500).send("Error deleting data");
+            } else if (result.affectedRows === 0) {
+                res.status(404).send("klas niet gevonden");
+            } else {
+                res.send({ message: "klas is verwijderd"});
+            }
+        });
+     });
+
+
     app.get("/cijfers", function (req, res) {
         const leerlingId = req.query.leerling_id;
     
@@ -108,16 +122,22 @@ module.exports = function (app) {
     });
 
     app.post("/cijfers", function (req, res) {
-        let obj1 = req.body[0];
-        let arr1 = Object.keys(obj1).map((key) => [obj1[key]]);
-        let sql = `INSERT INTO cijfers (leerling_id, vak_id, cijfer) VALUES (?, ?, ?)`;
-        conn.query(sql, arr1, function (err, result) {
+        const { klas_id, vak_id, leerlingen } = req.body;
+    
+        if (!klas_id || !vak_id || !leerlingen || leerlingen.length === 0) {
+            return res.status(400).send("Missing klas_id, vak_id, or leerlingen data");
+        }
+    
+        const sql = "INSERT INTO cijfers (leerling_id, vak_id, cijfer) VALUES ?";
+        const values = leerlingen.map((leerling) => [leerling.leerling_id, vak_id, leerling.cijfer]);
+    
+        conn.query(sql, [values], function (err, result) {
             if (err) {
-                console.error(err);
-                res.status(500).send("Error adding the Cijfer");
-            } else {
-                res.send("Cijfer successfully added!");
+                console.error("Error inserting cijfers:", err);
+                return res.status(500).send("Error saving cijfers");
             }
+    
+            res.send({ message: "Cijfers successfully added!", insertedRows: result.affectedRows });
         });
     });
 
