@@ -41,8 +41,6 @@ const registerDocent = async (req, res) => {
                         email: docent.email,
                         role: 'docent', // Automatically set to 'user'
                         id: result.insertId, // MySQL returns inserted ID
-                        name: user.name,
-                        email: user.email,
                         token: token, // JWT token returned in the response
                     });
                 });
@@ -56,10 +54,10 @@ const registerDocent = async (req, res) => {
 
 // Register user
 const registerLeerling = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, klas_id } = req.body;
 
     try {
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !klas_id ) {
             return res.status(400).json({ message: "Please add all fields" });
         }
 
@@ -75,8 +73,8 @@ const registerLeerling = async (req, res) => {
                 const hashedPassword = await bcrypt.hash(password, salt);
 
                 // Insert the new user into MySQL
-                const user = { name, email, password: hashedPassword };
-                connection.query('INSERT INTO users SET ?', user, (err, result) => {
+                const user = { name, email, password: hashedPassword, klas_id };
+                connection.query('INSERT INTO leerlingen SET ?', user, (err, result) => {
                     if (err) throw err;
 
                     // Generate token
@@ -86,6 +84,7 @@ const registerLeerling = async (req, res) => {
                         id: result.insertId, // MySQL returns inserted ID
                         name: user.name,
                         email: user.email,
+                        klas_id: user.klas_id,
                         token: token, // JWT token returned in the response
                     });
                 });
