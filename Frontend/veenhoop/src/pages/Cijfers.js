@@ -69,7 +69,11 @@ const GradesOverview = () => {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return (
+        <>
+        <SideNav/>
+        <p>Loading...</p>
+        </>);
     }
 
     return (
