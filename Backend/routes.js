@@ -307,6 +307,20 @@ module.exports = function (app) {
         });
     });
 
+    app.delete("/vakken/:id", function (req, res) {
+        let sql = "DELETE FROM vakken WHERE vak_id = ?";
+        conn.query(sql, [req.params.id], function (err, result) {
+            if (err) {
+                res.status(500).send("Error deleting data");
+            } else if (result.affectedRows === 0) {
+                res.status(404).send("vak niet gevonden");
+            } else {
+                res.send({ message: "vak is verwijderd"});
+            }
+        });
+     });
+
+
     app.get("/historische", function (req, res) {
         let sql = "SELECT * FROM historische_cijfers";
         conn.query(sql, function (err, rows) {
